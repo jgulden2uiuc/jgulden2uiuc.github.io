@@ -28,7 +28,7 @@ const line = d3.line()
   .y(function(d) { return yScale(d.gdp); });
 
 // Load data
-d3.csv("data.csv").then(function(data) {
+d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
   // Prepare the data
   const parsedData = [];
   data.forEach(d => {
