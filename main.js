@@ -61,28 +61,26 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
   // Draw lines
   const country = svg.selectAll(".country")
-    .data(dataByCountry)
+    .data(Array.from(dataByCountry))
     .enter().append("g")
       .attr("class", "country");
-
+  
   country.append("path")
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
     .style("stroke", ([key, values]) => color(key))
-    .on('click', function() {
-        let [key, values] = d3.select(this).datum();
-
+    .on('click', function(event, [key, values]) {
         // Update scales
         yScale.domain([0, d3.max(values, d => d.gdp)]);
         xScale.domain(d3.extent(values, d => d.year));
-
+  
         // Update axes
         svg.select('.x.axis').transition().call(xAxis);
         svg.select('.y.axis').transition().call(yAxis);
-
+  
         // Redraw line
         d3.select(this).attr("d", line(values));
-
+  
         // Show back button
         d3.select("#back").style("visibility", "visible");
     })
@@ -99,6 +97,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
           .style('opacity', 1)
           .style('stroke-width', '2px');
     });
+
 
   // Draw legend
   country.append("text")
