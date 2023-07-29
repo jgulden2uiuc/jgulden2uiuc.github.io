@@ -85,6 +85,19 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
         // Show back button
         d3.select("#back").style("visibility", "visible");
+      })
+    .on('mouseover', function() {
+        d3.selectAll('.line')
+          .style('opacity', 0.2)
+          .style('stroke-width', '1px');
+        d3.select(this)
+          .style('opacity', 1)
+          .style('stroke-width', '3px');
+      })
+    .on('mouseout', function() {
+        d3.selectAll('.line')
+          .style('opacity', 1)
+          .style('stroke-width', '2px');
       });
 
   // Draw legend
