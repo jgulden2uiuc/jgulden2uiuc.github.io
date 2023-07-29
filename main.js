@@ -1,8 +1,8 @@
 // main.js
 
 // Width and height of the chart
-const width = 800, height = 600;
-const margin = {top: 20, right: 20, bottom: 30, left: 50};
+const width = 960, height = 500;
+const margin = {top: 20, right: 80, bottom: 30, left: 50};
 
 // Create SVG
 const svg = d3.select('#chart').append('svg')
@@ -28,7 +28,7 @@ const line = d3.line()
   .y(function(d) { return yScale(d.gdp); });
 
 // Load data
-d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
+d3.csv("data.csv").then(function(data) {
   // Prepare the data
   const parsedData = [];
   data.forEach(d => {
@@ -43,19 +43,35 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
   // Group data by country
   const dataByCountry = d3.group(parsedData, d => d.country);
+  const countries = Array.from(dataByCountry.keys());
+  
+  color.domain(countries);
   
   // Set domains for scales
   xScale.domain(d3.extent(parsedData, function(d) { return d.year; }));
   yScale.domain([0, d3.max(parsedData, function(d) { return d.gdp; })]);
 
+  // Draw axes
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + yScale.range()[0] + ")")
+    .call(xAxis);
+
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
   // Draw lines
-  const lines = svg.selectAll(".line")
+  const country = svg.selectAll(".country")
     .data(dataByCountry)
-    .enter().append("path")
-      .attr("class", "line")
-      .attr("d", ([key, values]) => line(values))
-      .style("stroke", ([key, values]) => color(key))
-      .on('click', function([key, values]) {
+    .enter().append("g")
+      .attr("class", "country");
+
+  country.append("path")
+    .attr("class", "line")
+    .attr("d", ([key, values]) => line(values))
+    .style("stroke", ([key, values]) => color(key))
+    .on('click', function([key, values]) {
         // Update scales
         yScale.domain([0, d3.max(values, d => d.gdp)]);
         xScale.domain(d3.extent(values, d => d.year));
@@ -70,36 +86,15 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         // Show back button
         d3.select("#back").style("visibility", "visible");
       });
-  
-  // Draw axes
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + yScale.range()[0] + ")")
-    .call(xAxis);
-
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
 
   // Draw legend
-  const legend = svg.selectAll(".legend")
-    .data(dataByCountry)
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function([key, values], i) { return "translate(0," + i * 20 + ")"; });
-
-  legend.append("rect")
-    .attr("x", width - 18)
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", ([key, values]) => color(key));
-
-  legend.append("text")
-    .attr("x", width - 24)
-    .attr("y", 9)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text(function([key, values]) { return key; });
+  country.append("text")
+    .datum(([key, values]) => ({key: key, value: values[values.length - 1]}))
+    .attr("transform", ([key, value]) => "translate(" + xScale(value.year) + "," + yScale(value.gdp) + ")")
+    .attr("x", 3)
+    .attr("dy", "0.35em")
+    .style("font", "10px sans-serif")
+    .text(([key, value]) => key);
 });
 
 // Back button functionality
