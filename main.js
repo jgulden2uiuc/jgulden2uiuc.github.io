@@ -1,0 +1,109 @@
+// main.js
+
+// Width and height of the chart
+const width = 800, height = 600;
+const margin = {top: 20, right: 20, bottom: 30, left: 50};
+
+// Create SVG
+const svg = d3.select('#chart').append('svg')
+  .attr('width', width)
+  .attr('height', height)
+  .append('g')
+  .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+// Create Scales
+const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
+const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
+
+// Create Axis
+const xAxis = d3.axisBottom(xScale);
+const yAxis = d3.axisLeft(yScale);
+
+// Create Color Scale
+const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+// Create line generator
+const line = d3.line()
+  .x(function(d) { return xScale(d.year); })
+  .y(function(d) { return yScale(d.gdp); });
+
+// Load data
+d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
+  // Prepare the data
+  const parsedData = [];
+  data.forEach(d => {
+    for (let i = 1960; i <= 2022; i++) {
+      parsedData.push({
+        country: d.country,
+        year: i,
+        gdp: +d[i]
+      });
+    }
+  });
+
+  // Group data by country
+  const dataByCountry = d3.group(parsedData, d => d.country);
+  
+  // Set domains for scales
+  xScale.domain(d3.extent(parsedData, function(d) { return d.year; }));
+  yScale.domain([0, d3.max(parsedData, function(d) { return d.gdp; })]);
+
+  // Draw lines
+  const lines = svg.selectAll(".line")
+    .data(dataByCountry)
+    .enter().append("path")
+      .attr("class", "line")
+      .attr("d", ([key, values]) => line(values))
+      .style("stroke", ([key, values]) => color(key))
+      .on('click', function([key, values]) {
+        // Update scales
+        yScale.domain([0, d3.max(values, d => d.gdp)]);
+        xScale.domain(d3.extent(values, d => d.year));
+
+        // Update axes
+        svg.select('.x.axis').transition().call(xAxis);
+        svg.select('.y.axis').transition().call(yAxis);
+        
+        // Redraw line
+        d3.select(this).attr("d", line(values));
+
+        // Show back button
+        d3.select("#back").style("visibility", "visible");
+      });
+  
+  // Draw axes
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + yScale.range()[0] + ")")
+    .call(xAxis);
+
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+  // Draw legend
+  const legend = svg.selectAll(".legend")
+    .data(dataByCountry)
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function([key, values], i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", ([key, values]) => color(key));
+
+  legend.append("text")
+    .attr("x", width - 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function([key, values]) { return key; });
+});
+
+// Back button functionality
+d3.select("#back").on("click", function() {
+  // reload the page
+  location.reload();
+});
