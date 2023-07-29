@@ -108,7 +108,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
     .text(function(d) { return d.id; });
-
+});
 
 // Back button functionality
 d3.select("#back").on("click", function() {
