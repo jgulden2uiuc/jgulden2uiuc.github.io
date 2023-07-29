@@ -102,13 +102,13 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
   // Draw legend
   country.append("text")
-    .datum(([key, values]) => ({key: key, value: values[values.length - 1]}))
-    .attr("transform", ([key, value]) => "translate(" + xScale(value.year) + "," + yScale(value.gdp) + ")")
+    .datum(function([key, values]) { return {id: key, value: values[values.length - 1]}; })
+    .attr("transform", function(d) { return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; })
     .attr("x", 3)
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
-    .text(([key, value]) => key);
-});
+    .text(function(d) { return d.id; });
+
 
 // Back button functionality
 d3.select("#back").on("click", function() {
