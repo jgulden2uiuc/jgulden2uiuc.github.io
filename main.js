@@ -101,13 +101,25 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
       });
 
   // Draw legend
-  country.append("text")
-    .datum(function([key, values]) { return {id: key, value: values[values.length - 1]}; })
-    .attr("transform", function(d) { return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; })
-    .attr("x", 3)
-    .attr("dy", "0.35em")
-    .style("font", "10px sans-serif")
-    .text(function(d) { return d.id; });
+  const legend = svg.selectAll(".legend")
+    .data(countries)
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + (i * 20) + ")"; });
+
+  legend.append("rect")
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", color);
+
+  legend.append("text")
+    .attr("x", width - 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(d => d);
+
 });
 
 // Back button functionality
