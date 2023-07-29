@@ -1,5 +1,3 @@
-// main.js
-
 // Width and height of the chart
 const width = 960, height = 500;
 const margin = {top: 20, right: 80, bottom: 30, left: 50};
@@ -44,9 +42,9 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
   // Group data by country
   const dataByCountry = d3.group(parsedData, d => d.country);
   const countries = Array.from(dataByCountry.keys());
-  
+
   color.domain(countries);
-  
+
   // Set domains for scales
   xScale.domain(d3.extent(parsedData, function(d) { return d.year; }));
   yScale.domain([0, d3.max(parsedData, function(d) { return d.gdp; })]);
@@ -71,7 +69,9 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
     .style("stroke", ([key, values]) => color(key))
-    .on('click', function([key, values]) {
+    .on('click', function() {
+        let [key, values] = d3.select(this).datum();
+
         // Update scales
         yScale.domain([0, d3.max(values, d => d.gdp)]);
         xScale.domain(d3.extent(values, d => d.year));
@@ -79,13 +79,13 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         // Update axes
         svg.select('.x.axis').transition().call(xAxis);
         svg.select('.y.axis').transition().call(yAxis);
-        
+
         // Redraw line
         d3.select(this).attr("d", line(values));
 
         // Show back button
         d3.select("#back").style("visibility", "visible");
-      })
+    })
     .on('mouseover', function() {
         d3.selectAll('.line')
           .style('opacity', 0.2)
@@ -93,33 +93,21 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         d3.select(this)
           .style('opacity', 1)
           .style('stroke-width', '3px');
-      })
+    })
     .on('mouseout', function() {
         d3.selectAll('.line')
           .style('opacity', 1)
           .style('stroke-width', '2px');
-      });
+    });
 
   // Draw legend
-  const legend = svg.selectAll(".legend")
-    .data(countries)
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + (i * 20) + ")"; });
-
-  legend.append("rect")
-    .attr("x", width - 18)
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", color);
-
-  legend.append("text")
-    .attr("x", width - 24)
-    .attr("y", 9)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text(d => d);
-
+  country.append("text")
+    .datum(([key, values]) => ({key: key, value: values[values.length - 1]}))
+    .attr("transform", ([key, value]) => "translate(" + xScale(value.year) + "," + yScale(value.gdp) + ")")
+    .attr("x", 3)
+    .attr("dy", "0.35em")
+    .style("font", "10px sans-serif")
+    .text(([key, value]) => key);
 });
 
 // Back button functionality
