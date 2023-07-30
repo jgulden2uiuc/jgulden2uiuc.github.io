@@ -103,11 +103,11 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
       // Adjust the legend
       svg.selectAll("text")
-      .each(function(d) {
-        const lastValue = d.value;
-        d3.select(this)
-          .attr("transform", "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")");
-      });
+    .each(function([key, values]) {
+      const lastValue = values[values.length - 1];
+      d3.select(this)
+        .attr("transform", "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")");
+    });
       
       d3.select("#back").style('display', 'inline');
     });
