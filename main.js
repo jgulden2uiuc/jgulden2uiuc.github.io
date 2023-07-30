@@ -107,7 +107,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
       return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
     });
       
-      d3.select("#back").style('display', 'inline');
+      d3.select("#back").style('display', 'block');
     });
     
   // Draw legend
