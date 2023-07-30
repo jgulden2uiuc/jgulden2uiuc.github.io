@@ -72,10 +72,11 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .style("stroke", ([key, values]) => color(key));
     
   // Draw legend
-  country.selectAll(".legend")
-    .data(([key, values]) => values)
-    .enter().append("text")
-    .attr("transform", d => "translate(" + xScale(d.year) + "," + yScale(d.gdp) + ")")
+  country.append("text")
+    .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
+    .attr("transform", function(d) { 
+      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
+    })
     .attr("x", 3)
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
