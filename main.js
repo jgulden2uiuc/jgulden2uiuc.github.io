@@ -29,7 +29,7 @@ const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
 const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
 
 // Create Axis
-const xAxis = d3.axisBottom(xScale);
+const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 const yAxis = d3.axisLeft(yScale);
 
 // Create Color Scale
