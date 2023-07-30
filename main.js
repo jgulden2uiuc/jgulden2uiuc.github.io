@@ -102,7 +102,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         });
 
       // Adjust the legend
-      svg.selectAll("text")
+      svg.selectAll(".legend")
     .each(function([key, values]) {
       const lastValue = values[values.length - 1];
       d3.select(this)
@@ -114,9 +114,10 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     
   // Draw legend
   country.append("text")
+    .attr("class", "legend") // Add this line
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
     .attr("transform", function(d) { 
-      return "translate(" + 0 + "," + yScale(d.value.gdp) + ")"; 
+      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
     })
     .attr("x", 3)
     .attr("dy", "0.35em")
