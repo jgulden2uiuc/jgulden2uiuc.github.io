@@ -1,42 +1,119 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    .line {
-      fill: none;
-      stroke-width: 2px;
-    }
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: #000;
-    }
-    .legend {
-      font-size: 14px;
-    }
-    .back {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-    #chart {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    #x-axis-label,
-    #y-axis-label {
-      font-size: 20px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div id="chart"></div>
-  <button id="back" class="back">Back</button>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="main.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        background-color: #1a1a1a;
+        color: #e6e6e6;
+        font-family: "Helvetica", sans-serif;
+      }
+
+      #chart {
+        flex-grow: 1;
+        background-color: #2a2a2a;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        margin: 20px auto;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .line {
+        fill: none;
+        stroke-width: 2px;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #e6e6e6;
+      }
+
+      .legend {
+        fill: #e6e6e6;
+        font-size: 14px;
+      }
+
+      .back {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ff6347; /* tomato color */
+        color: #ffffff; /* text color */
+        border: none;
+        padding: 15px 32px; /* vertical padding and horizontal padding */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        transition-duration: 0.4s; /* transition effect */
+        cursor: pointer;
+        border-radius: 12px; /* rounded corners */
+        display: none; /* initially hidden */
+      }
+
+      .back:hover {
+        background-color: #dc281e; /* a darker red on hover */
+        color: white;
+      }
+
+      #x-axis-label,
+      #y-axis-label {
+        fill: #e6e6e6;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .info-left,
+      #info-right {
+        width: 15%;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #000;
+        border-radius: 0 25px 25px 0;
+        font-size: 16px;
+        line-height: 1.5;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+        text-align: justify;
+      }
+
+      #info-right {
+        background-color: #ff6347;
+        border-radius: 25px 0 0 25px;
+      }
+
+      #main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <div class="info-left">
+        GDP per capita is a measure of a country's economic output for each
+        citizen. It gives us an idea of how prosperous the country is relative
+        to its population. This particular data comes from the World Bank's
+        estimates according to a constant 2015 USD. With that said, GDP per
+        capita does not take into account the cost of living within a country,
+        nor does it tell us the typical income or quality of life for the
+        average citizen.
+      </div>
+      <div id="chart"></div>
+      <div id="info-right" class="info">
+        Note that in the year 2020, we can clearly see the effects of the
+        COVID-19 pandemic on GDP per capita, as all countries see a slight to
+        significant dip and subsequent rise.
+      </div>
+      <button id="back" class="back">Back</button>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="main.js"></script>
+  </body>
 </html>
