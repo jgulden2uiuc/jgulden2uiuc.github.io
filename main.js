@@ -12,7 +12,7 @@ const svg = d3.select('#chart').append('svg')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // Back button
-const backButton = const backButton = d3.select("#back");
+const backButton = d3.select("#back");
 
 // Create Scales
 const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
