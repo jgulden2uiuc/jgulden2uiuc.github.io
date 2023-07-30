@@ -36,19 +36,19 @@ const yAxis = d3.axisLeft(yScale);
 svg.append("text")             
       .attr("transform",
             "translate(" + (width/2) + " ," + 
-                           (height - margin.top) + ")")
+                           (height - margin.top + 30) + ")")
       .style("text-anchor", "middle")
       .style("font", "16px sans-serif")
       .text("Year");
 
 svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
+      .attr("y", 0 - margin.left - 30)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .style("font", "16px sans-serif")
-      .text("GDP per capita");  
+      .text("GDP per capita");
 
 // Create Color Scale
 const color = d3.scaleOrdinal(d3.schemeCategory10);
