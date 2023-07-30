@@ -11,27 +11,9 @@ const svg = d3.select('#chart').append('svg')
   .append('g')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-// Append 'defs' to your SVG
-var defs = svg.append('defs');
-
-// Append a 'clipPath' to your 'defs'
-var clip = defs.append('clipPath')
-  .attr('id', 'clip');
-
-// Append a 'rect' to your 'clipPath'
-clip.append('rect')
-  .attr('width', width - margin.left - margin.right)
-  .attr('height', height - margin.top - margin.bottom);
-
-// Then append 'clip-path' attribute to your chart area
-svg.append('g')
-  .attr('clip-path', 'url(#clip)')
-  .append('g')
-  .attr('class', 'countries');
-
 // Create Scales
 const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
-const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
+let yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
 
 // Create Axis
 const xAxis = d3.axisBottom(xScale);
@@ -79,16 +61,37 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .call(yAxis);
 
   // Draw lines
-  const country = svg.select('.countries').selectAll(".country")
+  const country = svg.selectAll(".country")
     .data(dataByCountry)
     .enter().append("g")
-      .attr("class", "country");
+    .attr("class", "country");
 
   country.append("path")
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
-    .style("stroke", ([key, values]) => color(key));
-    
+    .style("stroke", ([key, values]) => color(key))
+    .on("mouseover", function() {
+      d3.select(this).style("stroke-width", "6px");
+    })
+    .on("mouseout", function() {
+      d3.select(this).style("stroke-width", "2.5px");
+    })
+    .on("click", function(d) {
+      // Change the y-axis to focus on the selected line
+      yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0])
+        .domain(d3.extent(d[1], d => d.gdp));
+  
+      svg.select(".y.axis")
+        .transition()
+        .duration(1000)
+        .call(d3.axisLeft(yScale));
+  
+      svg.select('.countries').selectAll(".line")
+        .transition()
+        .duration(1000)
+        .attr("d", line.y(d => yScale(d.gdp)));
+    });
+
   // Draw legend
   country.append("text")
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
@@ -99,38 +102,6 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
     .text(d => d.country);
-
-  // Line hover
-  svg.select('.countries').selectAll(".line")
-    .on("mouseover", function(d) {
-      // Highlight the line to be more visible
-      d3.select(this).style("stroke-width", "5");
-  
-      // Decrease the opacity of all other lines
-      svg.select('.countries').selectAll(".line").filter(e => e !== d).style("opacity", "0.2");
-    })
-    .on("mouseout", function(d) {
-      // Return the line to normal visibility
-      d3.select(this).style("stroke-width", "1");
-  
-      // Return the opacity of all other lines to normal
-      svg.select('.countries').selectAll(".line").filter(e => e !== d).style("opacity", "1");
-    })
-    .on("click", function([key, values]) {
-      // Change the y-axis to focus on the selected line
-      const newYScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0])
-        .domain(d3.extent(values, d => d.gdp));
-  
-      svg.select(".y.axis")
-        .transition()
-        .duration(1000)
-        .call(d3.axisLeft(newYScale));
-  
-      svg.select('.countries').selectAll(".line")
-        .transition()
-        .duration(1000)
-        .attr("d", line.y(d => newYScale(d.gdp)));
-    });
 });
 
 // Back button functionality
