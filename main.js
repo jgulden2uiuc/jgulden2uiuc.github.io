@@ -11,18 +11,8 @@ const svg = d3.select('#chart').append('svg')
   .append('g')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-// Append a "Back" button but make it invisible by default
-const backButton = svg.append("text")
-  .text("Back")
-  .attr("x", width - margin.right)
-  .attr("y", margin.top * 2)  // Make it double of margin.top to ensure it is in the visible area
-  .style("font", "16px sans-serif")
-  .style("fill", "black")
-  .style("cursor", "pointer")
-  .style("display", "none")  // Hidden by default
-  .on("click", function() {
-    location.reload();
-  });
+// Back button
+const backButton = const backButton = d3.select("#back");
 
 // Create Scales
 const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
