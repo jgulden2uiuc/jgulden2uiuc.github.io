@@ -79,13 +79,16 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
       d3.selectAll(".line").style("opacity", 1)  // Reset opacity
                            .style("stroke-width", "1.5");  // Reset stroke width
     })
-    .on("click", function(d) {
-      // Adjust the yScale domain to focus on the selected line and redraw the y-axis and the lines.
-      const [key, values] = d;
-      yScale.domain(d3.extent(values, d => d.gdp));
-      svg.select(".y.axis").call(yAxis);
-      svg.selectAll(".line").attr("d", ([key, values]) => line(values));
-    });
+    .on("click", function(event) {
+    // Access the data bound to the clicked line
+    const [key, values] = d3.select(this).datum();
+  
+    // Adjust the yScale domain to focus on the selected line and redraw the y-axis and the lines.
+    yScale.domain(d3.extent(values, d => d.gdp));
+    svg.select(".y.axis").transition().duration(1000).call(yAxis);
+    svg.selectAll(".line").transition().duration(1000).attr("d", ([key, values]) => line(values));
+  });
+
     
   // Draw legend
   country.append("text")
