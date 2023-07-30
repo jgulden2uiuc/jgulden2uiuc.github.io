@@ -1,8 +1,8 @@
 // main.js
 
 // Width and height of the chart
-const width = 1200, height = 600;
-const margin = {top: 20, right: 100, bottom: 30, left: 50};
+const width = 960, height = 500;
+const margin = {top: 20, right: 80, bottom: 30, left: 50};
 
 // Create SVG
 const svg = d3.select('#chart').append('svg')
@@ -124,13 +124,6 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
           return line(filteredValues);
         });
 
-      // Hide lines with data above the new y-axis maximum
-      svg.selectAll(".line")
-        .attr('d', function([key, values]) {
-          const filteredValues = values.filter(v <= v.gdp <= yScale.domain()[1]);
-          return line(filteredValues);
-        });
-
       // Adjust the legend
       svg.selectAll(".legend")
     .attr("transform", function(d) { 
@@ -139,10 +132,6 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
       
       backButton.style('display', 'block');
       disableMouseEvents();
-
-      // Reduce the opacity of all lines and then increase the opacity of the clicked line
-      d3.selectAll(".line").style("opacity", 0.2);
-      d3.select(this).style("opacity", 1).style("stroke-width", "2.5px");
     });
     
   // Draw legend
