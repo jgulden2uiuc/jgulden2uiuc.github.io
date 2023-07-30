@@ -32,6 +32,24 @@ const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
 const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 const yAxis = d3.axisLeft(yScale);
 
+// Axis titles
+svg.append("text")             
+      .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                           (height - margin.top) + ")")
+      .style("text-anchor", "middle")
+      .style("font", "16px sans-serif")
+      .text("Year");
+
+svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("font", "16px sans-serif")
+      .text("GDP per capita");  
+
 // Create Color Scale
 const color = d3.scaleOrdinal(d3.schemeCategory10);
 
