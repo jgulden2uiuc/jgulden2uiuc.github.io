@@ -65,23 +65,26 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .data(dataByCountry)
     .enter().append("g")
       .attr("class", "country");
-
+  
   country.append("path")
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
-    .style("stroke", ([key, values]) => color(key));
-    
-  // Draw legend
-  country.append("text")
-    .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
-    .attr("transform", function(d) { 
-      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
+    .style("stroke", ([key, values]) => color(key))
+    .on("mouseover", function() {
+      d3.selectAll(".line").style("opacity", 0.1);  // Fade all lines
+      d3.select(this).style("opacity", 1)  // Highlight the current line
+                    .style("stroke-width", "3");  // Increase stroke width for better visibility
     })
-    .attr("x", 3)
-    .attr("dy", "0.35em")
-    .style("font", "10px sans-serif")
-    .text(d => d.country);
-});
+    .on("mouseout", function() {
+      d3.selectAll(".line").style("opacity", 1)  // Reset opacity
+                           .style("stroke-width", "1.5");  // Reset stroke width
+    })
+    .on("click", function([key, values]) {
+      // Adjust the yScale domain to focus on the selected line and redraw the y-axis and the lines.
+      yScale.domain(d3.extent(values, d => d.gdp));
+      svg.select(".y.axis").call(yAxis);
+      svg.selectAll(".line").attr("d", ([key, values]) => line(values));
+    });
 
 // Back button functionality
 d3.select("#back").on("click", function() {
