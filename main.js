@@ -1,14 +1,17 @@
 // main.js
 
 // Width and height of the chart
+const svgWidth = 1100, svgHeight = 500;
 const width = 960, height = 500;
 const margin = {top: 20, right: 80, bottom: 30, left: 50};
 
 // Create SVG
 const svg = d3.select('#chart').append('svg')
-  .attr('width', width)
-  .attr('height', height)
-  .append('g')
+  .attr('width', svgWidth)
+  .attr('height', svgHeight);
+
+// Create a group to contain the plot
+const plot = svg.append('g')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // Append a "Back" button but make it invisible by default
