@@ -96,6 +96,9 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
     .text(d => d.country);
+})
+.catch(function(error){
+  console.log('There was a problem processing your data: ', error);
 });
 
 // Back button functionality
