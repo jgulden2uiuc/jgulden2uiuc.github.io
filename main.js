@@ -103,10 +103,11 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
       // Adjust the legend
       svg.selectAll("text")
-        .attr("transform", function([key, values]) {
-          const lastValue = values[values.length - 1];
-          return "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")";
-        });
+      .each(function(d) {
+        const lastValue = d.value;
+        d3.select(this)
+          .attr("transform", "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")");
+      });
       
       d3.select("#back").style('display', 'inline');
     });
@@ -115,7 +116,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
   country.append("text")
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
     .attr("transform", function(d) { 
-      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
+      return "translate(" + 0 + "," + yScale(d.value.gdp) + ")"; 
     })
     .attr("x", 3)
     .attr("dy", "0.35em")
