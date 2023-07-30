@@ -19,21 +19,25 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      visibility: hidden;
     }
-    /* New CSS for centering the chart */
-    .chart-container {
+    #chart {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
+    #x-axis-label,
+    #y-axis-label {
+      font-size: 20px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <!-- Wrap the chart div with the new chart-container div -->
-  <div class="chart-container">
-    <div id="chart"></div>
+  <div id="chart">
+    <div id="y-axis-label">GDP per capita</div>
+    <svg></svg>
+    <div id="x-axis-label">Year</div>
   </div>
   <button id="back" class="back">Back</button>
   <script src="https://d3js.org/d3.v7.min.js"></script>
