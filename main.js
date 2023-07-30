@@ -76,7 +76,7 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         .style('stroke-width', '2.5px');
     })
     .on('mouseout', function(event, d) {
-      d3.select(this)
+      d3.selectAll(".line")
         .style('opacity', 0.5)
         .style('stroke-width', '1px');
     })
@@ -100,6 +100,13 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
         .attr('d', function([key, values]) {
           const filteredValues = values.filter(v => v.gdp >= yScale.domain()[0]);
           return line(filteredValues);
+        });
+
+      // Adjust the legend
+      svg.selectAll("text")
+        .attr("transform", function([key, values]) {
+          const lastValue = values[values.length - 1];
+          return "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")";
         });
     });
     
