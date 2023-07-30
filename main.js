@@ -11,6 +11,20 @@ const svg = d3.select('#chart').append('svg')
   .append('g')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+// Append a "Back" button but make it invisible by default
+const backButton = svg.append("text")
+  .text("Back")
+  .attr("x", width - margin.right)
+  .attr("y", margin.top)
+  .style("font", "16px sans-serif")
+  .style("fill", "black")
+  .style("cursor", "pointer")
+  .style("display", "none")  // Hidden by default
+  .on("click", function() {
+    // Reload the page on click
+    location.reload();
+  });
+
 // Create Scales
 const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
 const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
@@ -70,49 +84,23 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
     .style("stroke", ([key, values]) => color(key))
-    .on('mouseover', function() {
-      d3.select(this).style('stroke-width', '3px');
-      d3.selectAll('.line').style('opacity', 0.1);
-      d3.select(this).style('opacity', 1);
+    .on("mouseover", function() {
+      d3.selectAll(".line").style("opacity", 0.2);
+      d3.select(this).style("opacity", 1).style("stroke-width", "2.5px");
     })
-    .on('mouseout', function() {
-      d3.select(this).style('stroke-width', '2.5px');
-      d3.selectAll('.line').style('opacity', 1);
+    .on("mouseout", function() {
+      d3.selectAll(".line").style("opacity", 1).style("stroke-width", "1.5px");
     })
-    .on('click', function(event, d) {
-      // Highlight the selected line
-      svg.selectAll(".line")
-        .style('opacity', 0.1)
-        .style('stroke-width', '1px');
-
-      d3.select(this)
-        .style('opacity', 1)
-        .style('stroke-width', '2.5px');
-      
-      // Update the y-axis according to the selected line's data
-      const selectedData = d[1];
-      yScale.domain(d3.extent(selectedData, d => d.gdp)).nice();
-      svg.selectAll(".y.axis").call(yAxis);
-      
-      // Hide lines with data below the new y-axis minimum
-      svg.selectAll(".line")
-        .attr('d', function([key, values]) {
-          const filteredValues = values.filter(v => v.gdp >= yScale.domain()[0]);
-          return line(filteredValues);
-        });
-
-      // Adjust the legend
-      svg.selectAll(".legend")
-    .attr("transform", function(d) { 
-      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
+    .on("click", ([key, values]) => {
+      const selectedData = values;
+      yScale.domain(d3.extent(selectedData, d => d.gdp));
+      svg.select(".y.axis").transition().call(yAxis);
+      svg.selectAll(".line").attr("d", ([key, values]) => line(values));
+      backButton.style("display", "block");
     });
-      
-      d3.select("#back").style('display', 'block');
-    });
-    
+
   // Draw legend
   country.append("text")
-    .attr("class", "legend") // Add this line
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
     .attr("transform", function(d) { 
       return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
@@ -121,10 +109,4 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
     .text(d => d.country);
-});
-
-// Back button functionality
-d3.select("#back").on("click", function() {
-  // reload the page
-  location.reload();
 });
