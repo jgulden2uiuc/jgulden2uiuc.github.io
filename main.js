@@ -15,13 +15,12 @@ const svg = d3.select('#chart').append('svg')
 const backButton = svg.append("text")
   .text("Back")
   .attr("x", width - margin.right)
-  .attr("y", margin.top)
+  .attr("y", margin.top * 2)  // Make it double of margin.top to ensure it is in the visible area
   .style("font", "16px sans-serif")
   .style("fill", "black")
   .style("cursor", "pointer")
   .style("display", "none")  // Hidden by default
   .on("click", function() {
-    // Reload the page on click
     location.reload();
   });
 
@@ -40,6 +39,18 @@ const color = d3.scaleOrdinal(d3.schemeCategory10);
 const line = d3.line()
   .x(function(d) { return xScale(d.year); })
   .y(function(d) { return yScale(d.gdp); });
+
+// Function to disable the mouse events
+function disableMouseEvents() {
+  svg.selectAll(".line")
+    .style("pointer-events", "none");
+}
+
+// Function to enable the mouse events
+function enableMouseEvents() {
+  svg.selectAll(".line")
+    .style("pointer-events", "all");
+}
 
 // Load data
 d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
@@ -119,7 +130,8 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
       return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
     });
       
-      d3.select("#back").style('display', 'block');
+      backButton.style('display', 'block');
+      disableMouseEvents();
     });
     
   // Draw legend
@@ -133,4 +145,10 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("dy", "0.35em")
     .style("font", "10px sans-serif")
     .text(d => d.country);
+});
+
+// On click event of the back button
+backButton.on("click", function() {
+  location.reload();
+  enableMouseEvents();  // Enable the mouse events when the back button is clicked
 });
