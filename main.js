@@ -3,7 +3,7 @@
 // Width and height of the chart
 const svgWidth = 1120, svgHeight = 500;
 const width = 960, height = 500;
-const margin = {top: 80, right: 160, bottom: 80, left: 80};
+const margin = {top: 20, right: 160, bottom: 30, left: 50};
 
 // Create SVG
 const svg = d3.select('#chart').append('svg')
@@ -17,7 +17,7 @@ const plot = svg.append('g')
 // Append a "Back" button but make it invisible by default
 const backButton = svg.append("text")
   .text("Back")
-  .attr("x", width)
+  .attr("x", width - margin.right/2)
   .attr("y", margin.top * 2)  // Make it double of margin.top to ensure it is in the visible area
   .style("font", "16px sans-serif")
   .style("fill", "black")
@@ -142,7 +142,15 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("class", "legend") // Add this line
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
     .attr("transform", function(d) { 
-      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
+      let x = xScale(d.value.year);
+      let y = yScale(d.value.gdp);
+      
+      // Ensure the x value is within the plot area width
+      if (x > width - margin.right) {
+        x = width - margin.right;
+      }
+      
+      return "translate(" + x + "," + y + ")"; 
     })
     .attr("x", 3)
     .attr("dy", "0.35em")
