@@ -2,7 +2,7 @@
 
 // Width and height of the chart
 const width = 960, height = 500;
-const margin = {top: 20, right: 80, bottom: 30, left: 50};
+const margin = {top: 60, right: 80, bottom: 60, left: 80};
 
 // Create SVG
 const svg = d3.select('#chart').append('svg')
