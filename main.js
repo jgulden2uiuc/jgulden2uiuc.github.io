@@ -70,15 +70,14 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
     .style("stroke", ([key, values]) => color(key))
-    .on('mouseover', function(event, d) {
-      d3.select(this)
-        .style('opacity', 1)
-        .style('stroke-width', '2.5px');
+    .on('mouseover', function() {
+      d3.select(this).style('stroke-width', '3px');
+      d3.selectAll('.line').style('opacity', 0.1);
+      d3.select(this).style('opacity', 1);
     })
-    .on('mouseout', function(event, d) {
-      d3.selectAll(".line")
-        .style('opacity', 0.5)
-        .style('stroke-width', '1px');
+    .on('mouseout', function() {
+      d3.select(this).style('stroke-width', '2.5px');
+      d3.selectAll('.line').style('opacity', 1);
     })
     .on('click', function(event, d) {
       // Highlight the selected line
@@ -108,6 +107,8 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
           const lastValue = values[values.length - 1];
           return "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")";
         });
+      
+      d3.select("#back").style('display', 'inline');
     });
     
   // Draw legend
