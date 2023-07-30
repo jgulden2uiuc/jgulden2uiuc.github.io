@@ -103,10 +103,8 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
 
       // Adjust the legend
       svg.selectAll(".legend")
-    .each(function([key, values]) {
-      const lastValue = values[values.length - 1];
-      d3.select(this)
-        .attr("transform", "translate(" + xScale(lastValue.year) + "," + yScale(lastValue.gdp) + ")");
+    .attr("transform", function(d) { 
+      return "translate(" + xScale(d.value.year) + "," + yScale(d.value.gdp) + ")"; 
     });
       
       d3.select("#back").style('display', 'inline');
