@@ -13,7 +13,7 @@ const svg = d3.select('#chart').append('svg')
 
 // Create Scales
 const xScale = d3.scaleLinear().range([0, width - margin.left - margin.right]);
-let yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
+const yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
 
 // Create Axis
 const xAxis = d3.axisBottom(xScale);
@@ -64,34 +64,45 @@ d3.csv("API_NY.GDP.PCAP.KD_DS2_en_csv_v2_5728900.csv").then(function(data) {
   const country = svg.selectAll(".country")
     .data(dataByCountry)
     .enter().append("g")
-    .attr("class", "country");
+      .attr("class", "country");
 
   country.append("path")
     .attr("class", "line")
     .attr("d", ([key, values]) => line(values))
     .style("stroke", ([key, values]) => color(key))
-    .on("mouseover", function() {
-      d3.select(this).style("stroke-width", "6px");
+    .on('mouseover', function(event, d) {
+      d3.select(this)
+        .style('opacity', 1)
+        .style('stroke-width', '2.5px');
     })
-    .on("mouseout", function() {
-      d3.select(this).style("stroke-width", "2.5px");
+    .on('mouseout', function(event, d) {
+      d3.select(this)
+        .style('opacity', 0.5)
+        .style('stroke-width', '1px');
     })
-    .on("click", function(d) {
-      // Change the y-axis to focus on the selected line
-      yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0])
-        .domain(d3.extent(d[1], d => d.gdp));
-  
-      svg.select(".y.axis")
-        .transition()
-        .duration(1000)
-        .call(d3.axisLeft(yScale));
-  
-      svg.select('.countries').selectAll(".line")
-        .transition()
-        .duration(1000)
-        .attr("d", line.y(d => yScale(d.gdp)));
-    });
+    .on('click', function(event, d) {
+      // Highlight the selected line
+      svg.selectAll(".line")
+        .style('opacity', 0.1)
+        .style('stroke-width', '1px');
 
+      d3.select(this)
+        .style('opacity', 1)
+        .style('stroke-width', '2.5px');
+      
+      // Update the y-axis according to the selected line's data
+      const selectedData = d[1];
+      yScale.domain(d3.extent(selectedData, d => d.gdp)).nice();
+      svg.selectAll(".y.axis").call(yAxis);
+      
+      // Hide lines with data below the new y-axis minimum
+      svg.selectAll(".line")
+        .attr('d', function([key, values]) {
+          const filteredValues = values.filter(v => v.gdp >= yScale.domain()[0]);
+          return line(filteredValues);
+        });
+    });
+    
   // Draw legend
   country.append("text")
     .datum(([key, values]) => ({country: key, value: values[values.length - 1]}))
