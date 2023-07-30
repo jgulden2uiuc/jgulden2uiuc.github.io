@@ -21,10 +21,20 @@
       right: 10px;
       visibility: hidden;
     }
+    /* New CSS for centering the chart */
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
   </style>
 </head>
 <body>
-  <div id="chart"></div>
+  <!-- Wrap the chart div with the new chart-container div -->
+  <div class="chart-container">
+    <div id="chart"></div>
+  </div>
   <button id="back" class="back">Back</button>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="main.js"></script>
